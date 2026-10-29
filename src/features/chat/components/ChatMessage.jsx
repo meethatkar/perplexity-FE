@@ -44,7 +44,7 @@ const ChatMessage = ({ message }) => {
 
   // Assistant / AI Message (Large box in center, matching the sketch)
   return (
-    <div className="w-full mb-8">
+    <div className="w-full max-w-6xl mb-8">
       {/* Main AI Box Container matching wireframe */}
       <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/80 border border-slate-700/70 text-slate-100 shadow-xl transition-all">
         {/* Main Section Heading: AI MESSAGE */}

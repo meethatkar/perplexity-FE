@@ -24,9 +24,12 @@ const MessageList = ({ messages = [], isLoading = false }) => {
         <div className="flex items-center justify-center w-14 h-14 mb-4 rounded-3xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400">
           <SparklesIcon className="w-7 h-7" />
         </div>
-        <h3 className="text-lg font-bold text-slate-200">Where knowledge begins</h3>
+        <h3 className="text-lg font-bold text-slate-200">
+          Where knowledge begins
+        </h3>
         <p className="mt-1 text-sm text-slate-400 max-w-sm">
-          Ask a question to search the web, synthesize answers, and organize your ideas.
+          Ask a question to search the web, synthesize answers, and organize
+          your ideas.
         </p>
       </div>
     );
@@ -35,7 +38,7 @@ const MessageList = ({ messages = [], isLoading = false }) => {
   return (
     <div
       ref={containerRef}
-      className="flex-1 w-full max-w-4xl mx-auto p-4 md:p-6 overflow-y-auto custom-scrollbar"
+      className="flex-1 w-full max-w-350 mx-auto p-4 md:p-6 overflow-y-auto custom-scrollbar"
     >
       {messages.map((message) => (
         <ChatMessage key={message.id} message={message} />
