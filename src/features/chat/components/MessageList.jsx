@@ -47,7 +47,7 @@ const MessageList = ({ messages = [], isLoading = false }) => {
       {isLoading && (
         <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800 text-slate-400 text-sm animate-pulse w-fit">
           <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping" />
-          <span>Synthesizing response...</span>
+          <span>Loading response...</span>
         </div>
       )}
     </div>

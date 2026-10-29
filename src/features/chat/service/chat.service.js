@@ -1,3 +1,4 @@
+import axios from "axios";
 import io from "socket.io-client";
 let socket = null;
 
@@ -10,4 +11,24 @@ export const initializeSocketConnection = () => {
     });
   }
   return socket;
+};
+
+const baseUrl = axios.create({
+  baseURL: "http://localhost:3000/api/ai",
+  withCredentials: true,
+});
+
+export const sendMessages = async (message, chatId) => {
+  const response = await baseUrl.post(`/ask-ai`, { prompt: message, chatId });
+  return response;
+};
+
+export const getAllChats = async () => {
+  const response = await baseUrl.get(`/`);
+  return response;
+};
+
+export const getChatMessages = async (chatId) => {
+  const response = await baseUrl.get(`/${chatId}/messages`);
+  return response;
 };
