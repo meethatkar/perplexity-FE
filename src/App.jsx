@@ -11,7 +11,7 @@ const App = () => {
     getUser();
   }, []);
   return (
-    <div>
+    <div className="w-full h-full min-h-screen">
       <RouterProvider router={router} />
     </div>
   );
