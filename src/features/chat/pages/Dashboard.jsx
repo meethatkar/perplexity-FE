@@ -42,12 +42,14 @@ const Dashboard = () => {
     }
   }, [user]);
 
-  // Fetch messages when currentChatId changes
+  // Fetch messages when currentChatId changes if not already loaded and not a temp id
   useEffect(() => {
-    if (currentChatId) {
-      getMessages(currentChatId);
+    if (currentChatId && !currentChatId.startsWith("temp_")) {
+      if (!chats[currentChatId]?.messages || chats[currentChatId].messages.length === 0) {
+        getMessages(currentChatId);
+      }
     }
-  }, [currentChatId]);
+  }, [currentChatId, chats]);
 
   // Memoized username: uses logged-in username or fallback for UI testing
   const displayUsername = useMemo(() => {
@@ -111,7 +113,11 @@ const Dashboard = () => {
           />
 
           {/* Central Scrollable Conversation Stream */}
-          <MessageList messages={activeMessages} isLoading={loading} />
+          <MessageList
+            messages={activeMessages}
+            isLoading={loading}
+            chatTitle={activeChatTitle}
+          />
 
           {/* Bottom Prompt Bar with Mic & Send */}
           <ChatInput

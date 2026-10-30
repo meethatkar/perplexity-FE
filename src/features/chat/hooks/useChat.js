@@ -4,6 +4,9 @@ import {
   setError,
   setLoading,
   createNewChat,
+  createDraftChat,
+  replaceDraftChat,
+  removeDraftChat,
   createMessage,
   setChats,
   setMessages,
@@ -18,33 +21,65 @@ export const useChat = () => {
   const dispatch = useDispatch();
 
   async function handleSendMessage(message, chatId) {
-    dispatch(setLoading(true));
-    try {
-      const data = await sendMessages(message, chatId);
-      const { chatDetails, response } = data.data;
-      if (chatDetails) {
-        dispatch(createNewChat({ chatDetails }));
-      }
-      const activeChatId = chatDetails?._id || chatId;
+    if (!message || !message.trim()) return;
+    const trimmedMessage = message.trim();
+    let tempChatId = null;
+
+    // 1. Immediately show user message in the chat area
+    if (chatId) {
       dispatch(
         createMessage({
-          chatID: activeChatId,
+          chatID: chatId,
           role: "user",
           time: new Date().toISOString(),
-          content: message,
+          content: trimmedMessage,
         }),
       );
+    } else {
+      tempChatId = "temp_" + Date.now();
       dispatch(
-        createMessage({
-          chatID: activeChatId,
-          role: "ai",
-          time: response?.updatedAt,
-          content: response?.content,
+        createDraftChat({
+          tempId: tempChatId,
+          initialMessage: {
+            role: "user",
+            content: trimmedMessage,
+            time: new Date().toISOString(),
+          },
         }),
       );
+    }
+
+    // 2. Immediately enable loading state so AI response loading card displays
+    dispatch(setLoading(true));
+
+    try {
+      const data = await sendMessages(trimmedMessage, chatId);
+      const { chatDetails, response } = data.data;
+
+      if (tempChatId) {
+        dispatch(
+          replaceDraftChat({
+            tempId: tempChatId,
+            chatDetails,
+            aiResponse: response,
+          }),
+        );
+      } else {
+        dispatch(
+          createMessage({
+            chatID: chatId,
+            role: "ai",
+            time: response?.updatedAt || new Date().toISOString(),
+            content: response?.content || response,
+          }),
+        );
+      }
     } catch (error) {
       dispatch(setError(error));
-      console.log("ERROR occured in sending message to ai: ", error);
+      console.log("ERROR occurred in sending message to ai: ", error);
+      if (tempChatId) {
+        dispatch(removeDraftChat({ tempId: tempChatId }));
+      }
     } finally {
       dispatch(setLoading(false));
     }

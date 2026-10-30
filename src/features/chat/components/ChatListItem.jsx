@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "../../../components/ui/Button";
 import { MessageSquareIcon, TrashIcon } from "./icons";
+import { formatChatTitle } from "../utils/formatTitle";
 
 /**
  * ChatListItem Component
@@ -8,15 +9,17 @@ import { MessageSquareIcon, TrashIcon } from "./icons";
  */
 const ChatListItem = ({ chat, isActive, onSelect, onDelete }) => {
   const handleClick = () => {
-    onSelect(chat._id);
+    onSelect(chat.id);
   };
 
   const handleDelete = (e) => {
     e.stopPropagation();
     if (onDelete) {
-      onDelete(chat._id);
+      onDelete(chat.id);
     }
   };
+
+  const formattedTitle = formatChatTitle(chat.title);
 
   return (
     <div
@@ -26,6 +29,7 @@ const ChatListItem = ({ chat, isActive, onSelect, onDelete }) => {
           ? "bg-indigo-600/20 text-white border-indigo-500/50 shadow-md shadow-indigo-500/10"
           : "bg-slate-800/40 text-slate-300 border-slate-700/60 hover:bg-slate-800/80 hover:text-white hover:border-slate-600"
       }`}
+      title={formattedTitle}
     >
       <div className="flex items-center gap-3 overflow-hidden">
         <MessageSquareIcon
@@ -35,7 +39,7 @@ const ChatListItem = ({ chat, isActive, onSelect, onDelete }) => {
               : "text-slate-400 group-hover:text-slate-200"
           }`}
         />
-        <span className="truncate">{chat.title}</span>
+        <span className="truncate">{formattedTitle}</span>
       </div>
 
       {onDelete && (

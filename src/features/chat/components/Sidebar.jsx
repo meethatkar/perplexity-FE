@@ -24,10 +24,12 @@ const Sidebar = ({
   const chatList = React.useMemo(() => {
     if (!chats) return [];
     if (Array.isArray(chats)) return chats;
-    return Object.entries(chats).map(([id, chat]) => ({
-      _id: chat._id || id,
-      ...chat,
-    }));
+    return Object.entries(chats)
+      .filter(([id]) => !id.startsWith("temp_"))
+      .map(([id, chat]) => ({
+        _id: chat._id || id,
+        ...chat,
+      }));
   }, [chats]);
 
   return (

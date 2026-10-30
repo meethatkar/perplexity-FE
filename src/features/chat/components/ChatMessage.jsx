@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import Button from "../../../components/ui/Button";
 import { SparklesIcon, CopyIcon, CheckIcon, GlobeIcon } from "./icons";
+import { formatChatTitle } from "../utils/formatTitle";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 /**
  * ChatMessage Component
  * Reusable message bubble supporting both right-aligned User messages
- * and large, prominent AI messages matching the wireframe sketch.
+ * and large, prominent AI messages formatted with MarkdownRenderer.
  */
-const ChatMessage = ({ message }) => {
+const ChatMessage = ({ message, chatTitle }) => {
   const [copied, setCopied] = useState(false);
   const isUser = message.role === "user";
 
@@ -34,7 +36,7 @@ const ChatMessage = ({ message }) => {
             )}
           </div>
           {/* User message pill matching sketch top-right placement */}
-          <div className="px-6 py-4 rounded-3xl rounded-tr-md bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/20 border border-indigo-400/30 text-sm md:text-base leading-relaxed break-words">
+          <div className="px-6 py-4 rounded-3xl rounded-tr-md bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/20 border border-indigo-400/30 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">
             {message.content}
           </div>
         </div>
@@ -47,20 +49,23 @@ const ChatMessage = ({ message }) => {
     <div className="w-full max-w-6xl mb-8">
       {/* Main AI Box Container matching wireframe */}
       <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/80 border border-slate-700/70 text-slate-100 shadow-xl transition-all">
-        {/* Main Section Heading: AI MESSAGE */}
+        {/* Main Section Heading: AI Title / Heading formatted in Markdown */}
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20 shrink-0">
               <SparklesIcon className="w-4 h-4" />
             </div>
-            <h3 className="text-base md:text-lg font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-200 uppercase">
-              AI MESSAGE
-            </h3>
+            <div className="text-base md:text-lg font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-200 uppercase truncate">
+              {formatChatTitle(message.title || chatTitle || "AI MESSAGE")}
+            </div>
           </div>
           {message.timestamp && (
-            <span className="text-xs text-slate-400">{message.timestamp}</span>
+            <span className="text-xs text-slate-400 shrink-0 ml-2">
+              {message.timestamp}
+            </span>
           )}
         </div>
+
         {/* Perplexity Sources / Citations list mapped efficiently */}
         {message.sources && message.sources.length > 0 && (
           <div className="mb-5 pb-4 border-b border-slate-800">
@@ -87,10 +92,8 @@ const ChatMessage = ({ message }) => {
           </div>
         )}
 
-        {/* AI Answer Content */}
-        <div className="text-sm md:text-base leading-relaxed text-slate-200 space-y-3 whitespace-pre-wrap">
-          {message.content}
-        </div>
+        {/* AI Answer Content: Formatted via MarkdownRenderer Component */}
+        <MarkdownRenderer content={message.content} />
 
         {/* AI Box Action Footer */}
         <div className="flex items-center justify-between pt-4 mt-6 border-t border-slate-800/80 text-xs text-slate-400">
