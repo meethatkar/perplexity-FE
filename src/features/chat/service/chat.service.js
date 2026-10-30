@@ -19,7 +19,10 @@ const baseUrl = axios.create({
 });
 
 export const sendMessages = async (message, chatId) => {
-  const response = await baseUrl.post(`/ask-ai`, { prompt: message, chatId });
+  const response = await baseUrl.post(`/ask-ai`, {
+    prompt: message,
+    chatID: chatId,
+  });
   return response;
 };
 

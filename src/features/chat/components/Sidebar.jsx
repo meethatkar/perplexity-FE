@@ -9,7 +9,7 @@ import { PlusIcon, XIcon, SparklesIcon } from "./icons";
  * and maps through the chat list efficiently with memoized items.
  */
 const Sidebar = ({
-  chats = [],
+  chats = {},
   activeChatId,
   onSelectChat,
   onNewChat,
@@ -18,6 +18,18 @@ const Sidebar = ({
   isOpen = false,
   onClose,
 }) => {
+  console.log("CHATTTT: ", chats);
+
+  // Used to create list of objects into array.
+  const chatList = React.useMemo(() => {
+    if (!chats) return [];
+    if (Array.isArray(chats)) return chats;
+    return Object.entries(chats).map(([id, chat]) => ({
+      _id: chat._id || id,
+      ...chat,
+    }));
+  }, [chats]);
+
   return (
     <>
       {/* Mobile Backdrop Overlay */}
@@ -44,7 +56,10 @@ const Sidebar = ({
             <div className="flex items-center font-bold tracking-wider text-xs uppercase">
               <span className="text-white">PERPLEXITY</span>
               <span className="mx-1.5 text-slate-500">|</span>
-              <span className="text-indigo-400 truncate max-w-[110px]" title={username}>
+              <span
+                className="text-indigo-400 truncate max-w-[110px]"
+                title={username}
+              >
                 {username}
               </span>
             </div>
@@ -81,19 +96,19 @@ const Sidebar = ({
         <div className="flex items-center justify-between px-1 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
           <span>Recent Conversations</span>
           <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400">
-            {chats.length}
+            {chatList.length}
           </span>
         </div>
 
         {/* Scrollable list mapping over chats */}
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-          {chats.length === 0 ? (
+          {chatList.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-40 text-center text-slate-500 text-xs px-4">
               <p>No chat history yet.</p>
               <p className="mt-1">Start a new thread to get answers.</p>
             </div>
           ) : (
-            chats.map((chat) => (
+            chatList.map((chat) => (
               <ChatListItem
                 key={chat.id}
                 chat={chat}
