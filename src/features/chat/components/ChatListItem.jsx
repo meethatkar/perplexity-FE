@@ -8,13 +8,13 @@ import { MessageSquareIcon, TrashIcon } from "./icons";
  */
 const ChatListItem = ({ chat, isActive, onSelect, onDelete }) => {
   const handleClick = () => {
-    onSelect(chat.id);
+    onSelect(chat._id);
   };
 
   const handleDelete = (e) => {
     e.stopPropagation();
     if (onDelete) {
-      onDelete(chat.id);
+      onDelete(chat._id);
     }
   };
 
@@ -30,7 +30,9 @@ const ChatListItem = ({ chat, isActive, onSelect, onDelete }) => {
       <div className="flex items-center gap-3 overflow-hidden">
         <MessageSquareIcon
           className={`w-4 h-4 shrink-0 transition-colors ${
-            isActive ? "text-indigo-400" : "text-slate-400 group-hover:text-slate-200"
+            isActive
+              ? "text-indigo-400"
+              : "text-slate-400 group-hover:text-slate-200"
           }`}
         />
         <span className="truncate">{chat.title}</span>

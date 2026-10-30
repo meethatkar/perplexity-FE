@@ -1,10 +1,12 @@
 import { useDispatch } from "react-redux";
 import {
-  setCurrentChatID,
+  setCurrentChatId,
   setError,
   setLoading,
   createNewChat,
   createMessage,
+  setChats,
+  setMessages,
 } from "../chat.slice";
 import {
   getAllChats,
@@ -20,10 +22,13 @@ export const useChat = () => {
     try {
       const data = await sendMessages(message, chatId);
       const { chatDetails, response } = data.data;
-      dispatch(createNewChat({ chatDetails }));
+      if (chatDetails) {
+        dispatch(createNewChat({ chatDetails }));
+      }
+      const activeChatId = chatDetails?._id || chatId;
       dispatch(
         createMessage({
-          chatID: chatDetails._id,
+          chatID: activeChatId,
           role: "user",
           time: new Date().toISOString(),
           content: message,
@@ -31,14 +36,12 @@ export const useChat = () => {
       );
       dispatch(
         createMessage({
-          chatID: chatDetails._id,
+          chatID: activeChatId,
           role: "ai",
-          time: response.updatedAt,
-          content: response.content,
+          time: response?.updatedAt,
+          content: response?.content,
         }),
       );
-      console.log("CHAT: ", chatDetails);
-      console.log("RESPONSE: ", response);
     } catch (error) {
       dispatch(setError(error));
       console.log("ERROR occured in sending message to ai: ", error);
@@ -53,6 +56,7 @@ export const useChat = () => {
       const data = await getAllChats();
       const { chats } = data.data;
       console.log("CHATS: ", chats);
+      dispatch(setChats(chats));
     } catch (error) {
       dispatch(setError(error));
       console.log("ERROR occured in fetching chats: ", error);
@@ -62,12 +66,14 @@ export const useChat = () => {
   }
 
   async function getMessages(chatID) {
+    if (!chatID) return;
     dispatch(setLoading(true));
     try {
       const data = await getChatMessages(chatID);
-      dispatch(setCurrentChatID(chatID));
+      dispatch(setCurrentChatId(chatID));
       const response = data.data.response;
       console.log("MESSAGES: ", response);
+      dispatch(setMessages({ chatId: chatID, messages: response }));
     } catch (error) {
       dispatch(setError(error));
       console.log("ERROR occured in fetching messages: ", error);

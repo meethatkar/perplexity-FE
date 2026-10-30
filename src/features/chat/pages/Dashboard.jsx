@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSocketIO } from "../hooks/UseSocketIO";
 import Sidebar from "../components/Sidebar";
@@ -7,8 +7,10 @@ import ChatHeader from "../components/ChatHeader";
 import MessageList from "../components/MessageList";
 import ChatInput from "../components/ChatInput";
 import { useChat } from "../hooks/useChat";
+import { setCurrentChatId } from "../chat.slice";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { handleSendMessage, getChats, getMessages } = useChat();
   const navigate = useNavigate();
@@ -28,14 +30,24 @@ const Dashboard = () => {
 
   console.log("STATE CHATSSS: ", chats);
 
-  // Auth check: If not logged in, you can redirect or fallback to preview user
+  // Auth check: If not logged in, redirect to login
   useEffect(() => {
     if (!loading && !user) navigate("/login");
   }, [user, loading, navigate]);
 
+  // Fetch chats when user is available (do NOT depend on chats to avoid infinite re-renders)
   useEffect(() => {
-    getChats();
+    if (user) {
+      getChats();
+    }
   }, [user]);
+
+  // Fetch messages when currentChatId changes
+  useEffect(() => {
+    if (currentChatId) {
+      getMessages(currentChatId);
+    }
+  }, [currentChatId]);
 
   // Memoized username: uses logged-in username or fallback for UI testing
   const displayUsername = useMemo(() => {
@@ -48,6 +60,10 @@ const Dashboard = () => {
     setIsSidebarOpen(false); // Close sidebar on mobile upon selection
   }, []);
 
+  const handleNewChat = useCallback(() => {
+    dispatch(setCurrentChatId(null));
+  }, []);
+
   // Mobile sidebar controls
   const handleToggleSidebar = useCallback(() => {
     setIsSidebarOpen((prev) => !prev);
@@ -56,6 +72,14 @@ const Dashboard = () => {
   const handleCloseSidebar = useCallback(() => {
     setIsSidebarOpen(false);
   }, []);
+
+  const activeMessages = useMemo(() => {
+    return (currentChatId && chats[currentChatId]?.messages) || [];
+  }, [chats, currentChatId]);
+
+  const activeChatTitle = useMemo(() => {
+    return currentChatId && chats[currentChatId]?.title;
+  }, [chats, currentChatId]);
 
   return (
     <div className="relative flex items-center justify-center h-screen w-full bg-slate-950 p-2 sm:p-3 md:p-4 overflow-hidden">
@@ -66,31 +90,34 @@ const Dashboard = () => {
       {/* Outer Rounded Container / Frame matching the user's wireframe sketch */}
       <div className="relative z-10 flex w-full max-w-[1900px] h-[calc(100vh-1rem)] sm:h-[calc(100vh-1.5rem)] md:h-[calc(100vh-2rem)] rounded-3xl border border-slate-800/90 bg-slate-900/50 overflow-hidden">
         {/* Left Column: Reusable Memoized Sidebar */}
-        {/* <Sidebar
+        <Sidebar
           chats={chats}
           activeChatId={currentChatId}
           onSelectChat={handleSelectChat}
-          onNewChat={() => {}}
+          onNewChat={handleNewChat}
           onDeleteChat={() => {}}
           username={displayUsername}
           isOpen={isSidebarOpen}
           onClose={handleCloseSidebar}
-        /> */}
+        />
 
         {/* Right Column: Main Chat & Response Area */}
         <main className="flex flex-col flex-1 h-full min-w-0 overflow-hidden bg-slate-950/40">
           {/* Header Bar */}
           <ChatHeader
-            // activeChatTitle={activeChat?.title}
+            activeChatTitle={activeChatTitle}
             onToggleSidebar={handleToggleSidebar}
             username={displayUsername}
           />
 
           {/* Central Scrollable Conversation Stream */}
-          {/* <MessageList messages={chats} isLoading={loading} /> */}
+          <MessageList messages={activeMessages} isLoading={loading} />
 
           {/* Bottom Prompt Bar with Mic & Send */}
-          <ChatInput onSendMessage={handleSendMessage} disabled={loading} />
+          <ChatInput
+            onSendMessage={(msg) => handleSendMessage(msg, currentChatId)}
+            disabled={loading}
+          />
         </main>
       </div>
     </div>

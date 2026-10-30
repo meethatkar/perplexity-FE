@@ -9,22 +9,49 @@ const chatSlice = createSlice({
     error: null,
   },
   reducers: {
+    // For setting messages from get api response
+    setChats: (state, action) => {
+      const chatsArray = action.payload || [];
+      const newChats = {};
+      chatsArray.forEach((chat) => {
+        newChats[chat._id] = {
+          id: chat._id,
+          title: chat.title,
+          user_id: chat.user,
+          lastUpdated: chat.updatedAt || chat.createdAt,
+          messages: state.chats[chat._id]?.messages || [],
+        };
+      });
+      state.chats = newChats;
+    },
     createNewChat: (state, action) => {
       const { chatDetails } = action.payload;
+      if (!chatDetails?._id) return;
       state.chats[chatDetails._id] = {
+        id: chatDetails._id,
         title: chatDetails.title,
         user_id: chatDetails.user,
         lastUpdated: chatDetails.updatedAt,
-        messages: new Array(0),
+        messages: state.chats[chatDetails._id]?.messages || [],
       };
+      state.currentChatId = chatDetails._id;
+    },
+    // For setting messages from get api response
+    setMessages: (state, action) => {
+      const { chatId, messages } = action.payload;
+      if (state.chats[chatId]) {
+        state.chats[chatId].messages = messages || [];
+      }
     },
     createMessage: (state, action) => {
       const { chatID, role, content, updatedAt } = action.payload;
-      state.chats[chatID].messages.push({
-        role,
-        content,
-        time: updatedAt,
-      });
+      if (state.chats[chatID]) {
+        state.chats[chatID].messages.push({
+          role,
+          content,
+          time: updatedAt,
+        });
+      }
     },
     setCurrentChatId: (state, action) => {
       state.currentChatId = action.payload;
@@ -41,9 +68,12 @@ const chatSlice = createSlice({
 export const {
   createMessage,
   createNewChat,
+  setChats,
+  setMessages,
   setLoading,
   setError,
-  setCurrentChatID,
+  setCurrentChatId,
+  setCurrentChatId: setCurrentChatID,
 } = chatSlice.actions;
 export default chatSlice.reducer;
 
