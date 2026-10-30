@@ -1,12 +1,17 @@
 import React from "react";
 import Button from "../../../components/ui/Button";
 import { MenuIcon, SparklesIcon } from "./icons";
+import { formatChatTitle } from "../utils/formatTitle";
 
 /**
  * ChatHeader Component
  * Top navigation bar inside the main view with mobile sidebar toggle and status
  */
 const ChatHeader = ({ activeChatTitle, onToggleSidebar, username }) => {
+  const displayTitle = activeChatTitle
+    ? formatChatTitle(activeChatTitle)
+    : "New Conversation";
+
   return (
     <header className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md shrink-0">
       <div className="flex items-center gap-3">
@@ -23,8 +28,8 @@ const ChatHeader = ({ activeChatTitle, onToggleSidebar, username }) => {
         </Button>
 
         <div>
-          <h2 className="text-base md:text-lg font-extrabold text-white tracking-wide truncate max-w-[240px] sm:max-w-md">
-            {activeChatTitle || "New Conversation"}
+          <h2 className="text-base md:text-lg font-extrabold text-white tracking-wide truncate max-w-[240px] sm:max-w-md" title={displayTitle}>
+            {displayTitle}
           </h2>
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
