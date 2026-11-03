@@ -70,7 +70,7 @@ const Dashboard = () => {
   }, []);
 
   const handleDeleteChat = useCallback((chatID) => {
-    dispatch(deleteChat(chatID));
+    deleteChat(chatID);
   }, []);
 
   // Mobile sidebar controls
@@ -124,6 +124,9 @@ const Dashboard = () => {
             messages={activeMessages}
             isLoading={loading}
             chatTitle={activeChatTitle}
+            onSelectSuggestion={(suggestion) =>
+              handleSendMessage(suggestion, currentChatId)
+            }
           />
 
           {/* Bottom Prompt Bar with Mic & Send */}
