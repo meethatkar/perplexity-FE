@@ -35,3 +35,8 @@ export const getChatMessages = async (chatId) => {
   const response = await baseUrl.get(`/${chatId}/messages`);
   return response;
 };
+
+export const deleteChatByID = async (chatID) => {
+  const response = await baseUrl.post(`/chat/delete`, { chatID });
+  return response;
+};
