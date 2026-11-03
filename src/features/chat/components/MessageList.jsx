@@ -6,7 +6,12 @@ import { SparklesIcon } from "./icons";
  * MessageList Component
  * Efficiently maps over the messages list with auto-scroll on updates
  */
-const MessageList = ({ messages = [], isLoading = false, chatTitle }) => {
+const MessageList = ({
+  messages = [],
+  isLoading = false,
+  chatTitle,
+  onSelectSuggestion,
+}) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -45,6 +50,7 @@ const MessageList = ({ messages = [], isLoading = false, chatTitle }) => {
           key={message._id || message.id || index}
           message={message}
           chatTitle={chatTitle}
+          onSelectSuggestion={onSelectSuggestion}
         />
       ))}
 

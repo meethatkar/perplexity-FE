@@ -48,7 +48,7 @@ const chatSlice = createSlice({
       state.currentChatId = tempId;
     },
     replaceDraftChat: (state, action) => {
-      const { tempId, chatDetails, aiResponse } = action.payload;
+      const { tempId, chatDetails, aiResponse, suggestions } = action.payload;
       const existingMessages = state.chats[tempId]?.messages || [];
       delete state.chats[tempId];
       if (chatDetails?._id) {
@@ -63,6 +63,7 @@ const chatSlice = createSlice({
               role: "ai",
               content: aiResponse?.content || "",
               time: aiResponse?.updatedAt || new Date().toISOString(),
+              suggestions: suggestions || [],
             },
           ],
         };
@@ -84,12 +85,13 @@ const chatSlice = createSlice({
       }
     },
     createMessage: (state, action) => {
-      const { chatID, role, content, updatedAt } = action.payload;
+      const { chatID, role, content, updatedAt, suggestions } = action.payload;
       if (state.chats[chatID]) {
         state.chats[chatID].messages.push({
           role,
           content,
           time: updatedAt || new Date().toISOString(),
+          suggestions: suggestions || [],
         });
       }
     },

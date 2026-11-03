@@ -55,7 +55,7 @@ export const useChat = () => {
 
     try {
       const data = await sendMessages(trimmedMessage, chatId);
-      const { chatDetails, response } = data.data;
+      const { chatDetails, response, suggestions } = data.data;
 
       if (tempChatId) {
         dispatch(
@@ -63,6 +63,7 @@ export const useChat = () => {
             tempId: tempChatId,
             chatDetails,
             aiResponse: response,
+            suggestions: suggestions || [],
           }),
         );
       } else {
@@ -72,6 +73,7 @@ export const useChat = () => {
             role: "ai",
             time: response?.updatedAt || new Date().toISOString(),
             content: response?.content || response,
+            suggestions: suggestions || [],
           }),
         );
       }
@@ -125,7 +127,7 @@ export const useChat = () => {
       const data = await deleteChatByID(chatID);
       console.log("CHAT DELETED SUCCESSFULLY");
       alert("chat deleted successfully");
-      dispatch(getChats());
+      getChats();
     } catch (error) {
       dispatch(setError(error));
       console.log("ERROR occured in deleting chat: ", error);

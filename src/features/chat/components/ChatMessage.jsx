@@ -9,7 +9,7 @@ import MarkdownRenderer from "./MarkdownRenderer";
  * Reusable message bubble supporting both right-aligned User messages
  * and large, prominent AI messages formatted with MarkdownRenderer.
  */
-const ChatMessage = ({ message, chatTitle }) => {
+const ChatMessage = ({ message, chatTitle, onSelectSuggestion }) => {
   const [copied, setCopied] = useState(false);
   const isUser = message.role === "user";
 
@@ -94,6 +94,33 @@ const ChatMessage = ({ message, chatTitle }) => {
 
         {/* AI Answer Content: Formatted via MarkdownRenderer Component */}
         <MarkdownRenderer content={message.content} />
+
+        {/* Follow-up Questions / Suggestions (Perplexity-style) */}
+        {message.suggestions && message.suggestions.length > 0 && (
+          <div className="mt-6 pt-5 border-t border-slate-800/80">
+            <div className="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-indigo-400">
+              <SparklesIcon className="w-3.5 h-3.5" />
+              <span>Related Questions</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {message.suggestions.map((suggestion, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() =>
+                    onSelectSuggestion && onSelectSuggestion(suggestion)
+                  }
+                  className="flex items-center justify-between w-full px-4 py-2.5 rounded-2xl bg-slate-800/40 hover:bg-indigo-950/40 border border-slate-700/60 hover:border-indigo-500/40 text-left text-xs md:text-sm text-slate-300 hover:text-white transition-all group cursor-pointer shadow-sm"
+                >
+                  <span className="line-clamp-1">{suggestion}</span>
+                  <span className="text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all text-sm font-semibold ml-2">
+                    +
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* AI Box Action Footer */}
         <div className="flex items-center justify-between pt-4 mt-6 border-t border-slate-800/80 text-xs text-slate-400">
