@@ -12,7 +12,7 @@ import { setCurrentChatId } from "../chat.slice";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { handleSendMessage, getChats, getMessages } = useChat();
+  const { handleSendMessage, getChats, getMessages, deleteChat } = useChat();
   const navigate = useNavigate();
   const socketIO = useSocketIO();
   const { chats, currentChatId, loading, error } = useSelector(
@@ -45,7 +45,10 @@ const Dashboard = () => {
   // Fetch messages when currentChatId changes if not already loaded and not a temp id
   useEffect(() => {
     if (currentChatId && !currentChatId.startsWith("temp_")) {
-      if (!chats[currentChatId]?.messages || chats[currentChatId].messages.length === 0) {
+      if (
+        !chats[currentChatId]?.messages ||
+        chats[currentChatId].messages.length === 0
+      ) {
         getMessages(currentChatId);
       }
     }
@@ -64,6 +67,10 @@ const Dashboard = () => {
 
   const handleNewChat = useCallback(() => {
     dispatch(setCurrentChatId(null));
+  }, []);
+
+  const handleDeleteChat = useCallback((chatID) => {
+    dispatch(deleteChat(chatID));
   }, []);
 
   // Mobile sidebar controls
@@ -97,7 +104,7 @@ const Dashboard = () => {
           activeChatId={currentChatId}
           onSelectChat={handleSelectChat}
           onNewChat={handleNewChat}
-          onDeleteChat={() => {}}
+          onDeleteChat={handleDeleteChat}
           username={displayUsername}
           isOpen={isSidebarOpen}
           onClose={handleCloseSidebar}

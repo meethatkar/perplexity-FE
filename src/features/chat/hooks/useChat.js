@@ -12,6 +12,7 @@ import {
   setMessages,
 } from "../chat.slice";
 import {
+  deleteChatByID,
   getAllChats,
   getChatMessages,
   sendMessages,
@@ -117,5 +118,21 @@ export const useChat = () => {
     }
   }
 
-  return { handleSendMessage, getChats, getMessages };
+  async function deleteChat(chatID) {
+    if (!chatID) return;
+    dispatch(setLoading(true));
+    try {
+      const data = await deleteChatByID(chatID);
+      console.log("CHAT DELETED SUCCESSFULLY");
+      alert("chat deleted successfully");
+      dispatch(getChats());
+    } catch (error) {
+      dispatch(setError(error));
+      console.log("ERROR occured in deleting chat: ", error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+
+  return { handleSendMessage, getChats, getMessages, deleteChat };
 };
