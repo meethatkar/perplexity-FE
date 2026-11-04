@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import Button from "../../../components/ui/Button";
 import { MicIcon, SendIcon } from "./icons";
+import { transcribeAudio } from "../service/chat.service";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
 
 /**
  * ChatInput Component
@@ -8,7 +10,7 @@ import { MicIcon, SendIcon } from "./icons";
  */
 const ChatInput = ({ onSendMessage, disabled = false }) => {
   const [prompt, setPrompt] = useState("");
-  const [isListening, setIsListening] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const textareaRef = useRef(null);
 
   const handleSubmit = (e) => {
@@ -41,9 +43,34 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
     }
   };
 
-  const toggleMic = () => {
-    setIsListening((prev) => !prev);
+  const { isRecording, startRecording, stopRecording } = useAudioRecorder();
+
+  const toggleMic = async () => {
+    if (isRecording) {
+      const audioBlob = await stopRecording();
+      if (!audioBlob) return;
+
+      try {
+        setIsTranscribing(true);
+        const transcript = await transcribeAudio(audioBlob);
+        if (transcript) {
+          setPrompt((prev) => (prev ? `${prev} ${transcript}` : transcript));
+        }
+      } catch (error) {
+        console.error("Transcription error:", error);
+      } finally {
+        setIsTranscribing(false);
+      }
+    } else {
+      await startRecording();
+    }
   };
+
+  const placeholder = isRecording
+    ? "Recording audio... click mic to stop"
+    : isTranscribing
+      ? "Transcribing with Whisper..."
+      : "Enter you prompt here...";
 
   return (
     <div className="w-full max-w-350 mx-auto p-4 pt-1">
@@ -59,11 +86,7 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
           onKeyDown={handleKeyDown}
           rows={1}
           disabled={disabled}
-          placeholder={
-            isListening
-              ? "Listening... Speak your prompt"
-              : "Enter your prompt here..."
-          }
+          placeholder={placeholder}
           className="flex-1 max-h-36 px-3 py-1.5 bg-transparent border-0 text-slate-100 placeholder-slate-400 text-sm md:text-base focus:outline-none resize-none overflow-y-auto custom-scrollbar"
         />
 
@@ -72,12 +95,12 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
           {/* Mic Icon Button using reusable Button */}
           <Button
             type="button"
-            variant={isListening ? "danger" : "secondary"}
+            variant={isRecording ? "danger" : "secondary"}
             size="icon"
             onClick={toggleMic}
-            title={isListening ? "Stop listening" : "Voice input"}
+            title={isRecording ? "Stop listening" : "Voice input"}
             className={`w-10 h-10 !rounded-2xl transition-all ${
-              isListening
+              isRecording
                 ? "!bg-rose-500/20 border-rose-500 text-rose-400 animate-pulse shadow-md shadow-rose-500/20"
                 : ""
             }`}
