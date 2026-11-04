@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import Button from "../../../components/ui/Button";
 import { MicIcon, SendIcon } from "./icons";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
+import { transcribeAudio } from "../service/chat.service";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
 
 /**
  * ChatInput Component
@@ -11,6 +10,7 @@ import SpeechRecognition, {
  */
 const ChatInput = ({ onSendMessage, disabled = false }) => {
   const [prompt, setPrompt] = useState("");
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const textareaRef = useRef(null);
 
   const handleSubmit = (e) => {
@@ -19,7 +19,6 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
 
     onSendMessage(prompt.trim());
     setPrompt("");
-    resetTranscript();
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -44,55 +43,34 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
     }
   };
 
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition,
-    isMicrophoneAvailable,
-  } = useSpeechRecognition();
+  const { isRecording, startRecording, stopRecording } = useAudioRecorder();
 
-  useEffect(() => {
-    console.log("TRANSCRIPT MANIPULATED");
+  const toggleMic = async () => {
+    if (isRecording) {
+      const audioBlob = await stopRecording();
+      if (!audioBlob) return;
 
-    if (transcript) {
-      setPrompt(transcript);
-      if (textareaRef.current) {
-        ((textareaRef.current.style.height = "auto"),
-          (textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 140)}px`));
+      try {
+        setIsTranscribing(true);
+        const transcript = await transcribeAudio(audioBlob);
+        if (transcript) {
+          setPrompt((prev) => (prev ? `${prev} ${transcript}` : transcript));
+        }
+      } catch (error) {
+        console.error("Transcription error:", error);
+      } finally {
+        setIsTranscribing(false);
       }
-    }
-  }, [transcript]);
-
-  useEffect(() => {
-    console.log("SPEECH LISTENING: ", listening);
-  }, [listening]);
-
-  const toggleMic = () => {
-    if (!browserSupportsSpeechRecognition) {
-      alert("Your browser does not support speech recognition.");
-      return;
-    }
-
-    if (!isMicrophoneAvailable) {
-      alert(
-        "Microphone permission is blocked. Please allow microphone access in your browser settings.",
-      );
-      return;
-    }
-
-    if (listening) {
-      SpeechRecognition.stopListening();
     } else {
-      resetTranscript();
-      console.log("TGL MIC: ", listening);
-      SpeechRecognition.startListening({
-        continuous: true,
-        interimResults: true,
-        language: "en-US",
-      });
+      await startRecording();
     }
   };
+
+  const placeholder = isRecording
+    ? "Recording audio... click mic to stop"
+    : isTranscribing
+      ? "Transcribing with Whisper..."
+      : "Enter you prompt here...";
 
   return (
     <div className="w-full max-w-350 mx-auto p-4 pt-1">
@@ -108,11 +86,7 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
           onKeyDown={handleKeyDown}
           rows={1}
           disabled={disabled}
-          placeholder={
-            listening
-              ? "Listening... Speak your prompt"
-              : "Enter your prompt here..."
-          }
+          placeholder={placeholder}
           className="flex-1 max-h-36 px-3 py-1.5 bg-transparent border-0 text-slate-100 placeholder-slate-400 text-sm md:text-base focus:outline-none resize-none overflow-y-auto custom-scrollbar"
         />
 
@@ -121,12 +95,12 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
           {/* Mic Icon Button using reusable Button */}
           <Button
             type="button"
-            variant={listening ? "danger" : "secondary"}
+            variant={isRecording ? "danger" : "secondary"}
             size="icon"
             onClick={toggleMic}
-            title={listening ? "Stop listening" : "Voice input"}
+            title={isRecording ? "Stop listening" : "Voice input"}
             className={`w-10 h-10 !rounded-2xl transition-all ${
-              listening
+              isRecording
                 ? "!bg-rose-500/20 border-rose-500 text-rose-400 animate-pulse shadow-md shadow-rose-500/20"
                 : ""
             }`}

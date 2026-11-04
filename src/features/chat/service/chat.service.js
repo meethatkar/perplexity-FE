@@ -38,3 +38,15 @@ export const deleteChatByID = async (chatID) => {
   const response = await baseUrl.post(`/ai/chat/delete`, { chatID });
   return response;
 };
+
+export const transcribeAudio = async (audioBlob) => {
+  const formData = new FormData();
+  formData.append("audio", audioBlob, "recording.webm");
+  const response = await baseUrl.post("/ai/transcribe", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data.text;
+};
