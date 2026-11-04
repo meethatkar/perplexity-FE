@@ -1,6 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Button from "../../../components/ui/Button";
 import { MicIcon, SendIcon } from "./icons";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 /**
  * ChatInput Component
@@ -8,7 +11,6 @@ import { MicIcon, SendIcon } from "./icons";
  */
 const ChatInput = ({ onSendMessage, disabled = false }) => {
   const [prompt, setPrompt] = useState("");
-  const [isListening, setIsListening] = useState(false);
   const textareaRef = useRef(null);
 
   const handleSubmit = (e) => {
@@ -17,6 +19,7 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
 
     onSendMessage(prompt.trim());
     setPrompt("");
+    resetTranscript();
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -41,8 +44,54 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
     }
   };
 
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+    isMicrophoneAvailable,
+  } = useSpeechRecognition();
+
+  useEffect(() => {
+    console.log("TRANSCRIPT MANIPULATED");
+
+    if (transcript) {
+      setPrompt(transcript);
+      if (textareaRef.current) {
+        ((textareaRef.current.style.height = "auto"),
+          (textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 140)}px`));
+      }
+    }
+  }, [transcript]);
+
+  useEffect(() => {
+    console.log("SPEECH LISTENING: ", listening);
+  }, [listening]);
+
   const toggleMic = () => {
-    setIsListening((prev) => !prev);
+    if (!browserSupportsSpeechRecognition) {
+      alert("Your browser does not support speech recognition.");
+      return;
+    }
+
+    if (!isMicrophoneAvailable) {
+      alert(
+        "Microphone permission is blocked. Please allow microphone access in your browser settings.",
+      );
+      return;
+    }
+
+    if (listening) {
+      SpeechRecognition.stopListening();
+    } else {
+      resetTranscript();
+      console.log("TGL MIC: ", listening);
+      SpeechRecognition.startListening({
+        continuous: true,
+        interimResults: true,
+        language: "en-US",
+      });
+    }
   };
 
   return (
@@ -60,7 +109,7 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
           rows={1}
           disabled={disabled}
           placeholder={
-            isListening
+            listening
               ? "Listening... Speak your prompt"
               : "Enter your prompt here..."
           }
@@ -72,12 +121,12 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
           {/* Mic Icon Button using reusable Button */}
           <Button
             type="button"
-            variant={isListening ? "danger" : "secondary"}
+            variant={listening ? "danger" : "secondary"}
             size="icon"
             onClick={toggleMic}
-            title={isListening ? "Stop listening" : "Voice input"}
+            title={listening ? "Stop listening" : "Voice input"}
             className={`w-10 h-10 !rounded-2xl transition-all ${
-              isListening
+              listening
                 ? "!bg-rose-500/20 border-rose-500 text-rose-400 animate-pulse shadow-md shadow-rose-500/20"
                 : ""
             }`}
