@@ -41,11 +41,11 @@ const LoginForm = () => {
       className="w-full max-w-md p-10 mx-auto backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
     >
       <div className="mb-8 text-center">
-        <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-white to-indigo-200">
+        <h2 className="text-2xl font-bold text-slate-100">
           Welcome Back
         </h2>
-        <p className="mt-2 text-indigo-200/80">
-          Please enter your details to sign in.
+        <p className="mt-2 text-sm text-slate-400">
+          Please enter your details to sign in to aether-ai.
         </p>
       </div>
 

@@ -35,8 +35,8 @@ const ChatMessage = ({ message, chatTitle, onSelectSuggestion }) => {
               </span>
             )}
           </div>
-          {/* User message pill matching sketch top-right placement */}
-          <div className="px-6 py-4 rounded-3xl rounded-tr-md bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/20 border border-indigo-400/30 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">
+          {/* User message pill */}
+          <div className="px-5 py-3.5 rounded-2xl rounded-tr-sm bg-slate-800 text-slate-100 border border-slate-700/80 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap shadow-sm">
             {message.content}
           </div>
         </div>
@@ -47,15 +47,15 @@ const ChatMessage = ({ message, chatTitle, onSelectSuggestion }) => {
   // Assistant / AI Message (Large box in center, matching the sketch)
   return (
     <div className="w-full max-w-6xl mb-8">
-      {/* Main AI Box Container matching wireframe */}
-      <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/80 border border-slate-700/70 text-slate-100 shadow-xl transition-all">
+      {/* Main AI Box Container */}
+      <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 text-slate-100 shadow-lg transition-all">
         {/* Main Section Heading: AI Title / Heading formatted in Markdown */}
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20 shrink-0">
-              <SparklesIcon className="w-4 h-4" />
+            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 shrink-0">
+              <SparklesIcon className="w-4 h-4 text-slate-400" />
             </div>
-            <div className="text-base md:text-lg font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-200 uppercase truncate">
+            <div className="text-sm md:text-base font-semibold tracking-wide text-slate-200 uppercase truncate">
               {formatChatTitle(message.title || chatTitle || "AI MESSAGE")}
             </div>
           </div>
@@ -66,11 +66,11 @@ const ChatMessage = ({ message, chatTitle, onSelectSuggestion }) => {
           )}
         </div>
 
-        {/* Perplexity Sources / Citations list mapped efficiently */}
+        {/* Sources / Citations list */}
         {message.sources && message.sources.length > 0 && (
           <div className="mb-5 pb-4 border-b border-slate-800">
             <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-              <GlobeIcon className="w-3.5 h-3.5 text-indigo-400" />
+              <GlobeIcon className="w-3.5 h-3.5 text-slate-400" />
               <span>Sources</span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -147,7 +147,7 @@ const ChatMessage = ({ message, chatTitle, onSelectSuggestion }) => {
           </div>
 
           <span className="text-[11px] text-slate-500">
-            Synthesized with Perplexity Engine
+            Synthesized with aether-ai Engine
           </span>
         </div>
       </div>

@@ -38,18 +38,18 @@ const ChatHeader = ({
           </h2>
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-medium text-slate-300">Perplexity Deep Research</span>
+            <span className="font-medium text-slate-300">aether-ai Engine</span>
           </div>
         </div>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3">
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs text-slate-300">
-          <SparklesIcon className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Model: Perplexity-Pro</span>
+          <SparklesIcon className="w-3.5 h-3.5 text-slate-400" />
+          <span>Model: aether-pro</span>
         </div>
 
-        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-xs shadow-md shadow-indigo-500/20 uppercase" title={username}>
+        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-xs shadow-sm uppercase" title={username}>
           {username ? username[0] : "U"}
         </div>
 
