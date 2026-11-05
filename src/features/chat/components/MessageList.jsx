@@ -61,15 +61,15 @@ const MessageList = ({
             {/* Header: AI Thinking */}
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20 shrink-0">
-                  <SparklesIcon className="w-4 h-4 animate-spin" />
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 shrink-0">
+                  <SparklesIcon className="w-4 h-4 animate-spin text-slate-400" />
                 </div>
-                <div className="text-base md:text-lg font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-200 uppercase truncate">
+                <div className="text-sm md:text-base font-semibold tracking-wide text-slate-200 uppercase truncate">
                   Searching & Synthesizing...
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-400 shrink-0 ml-2">
-                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-400 shrink-0 ml-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-ping" />
                 <span>Thinking</span>
               </div>
             </div>
@@ -85,7 +85,7 @@ const MessageList = ({
             {/* Footer */}
             <div className="flex items-center justify-between pt-4 mt-6 border-t border-slate-800/80 text-xs text-slate-500">
               <span className="text-[11px]">
-                Perplexity AI Engine Processing
+                aether-ai Processing
               </span>
             </div>
           </div>

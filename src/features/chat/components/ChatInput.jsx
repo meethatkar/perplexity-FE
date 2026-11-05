@@ -135,7 +135,7 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
           </kbd>{" "}
           for new line
         </span>
-        <span className="hidden sm:inline">Perplexity Search Ready</span>
+        <span className="hidden sm:inline">aether-ai Ready</span>
       </div>
     </div>
   );

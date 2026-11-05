@@ -94,12 +94,8 @@ const Dashboard = () => {
 
   return (
     <div className="relative flex items-center justify-center h-screen w-full bg-slate-950 p-2 sm:p-3 md:p-4 overflow-hidden">
-      {/* Background ambient lighting effects matching project design */}
-      <div className="absolute top-[-10%] left-[-5%] w-[45%] h-[45%] rounded-full bg-indigo-600/15 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[45%] h-[45%] rounded-full bg-purple-600/15 blur-[120px] pointer-events-none" />
-
       {/* Outer Rounded Container / Frame matching the user's wireframe sketch */}
-      <div className="relative z-10 flex w-full max-w-[1900px] h-[calc(100vh-1rem)] sm:h-[calc(100vh-1.5rem)] md:h-[calc(100vh-2rem)] rounded-3xl border border-slate-800/90 bg-slate-900/50 overflow-hidden">
+      <div className="relative z-10 flex w-full max-w-[1900px] h-[calc(100vh-1rem)] sm:h-[calc(100vh-1.5rem)] md:h-[calc(100vh-2rem)] rounded-3xl border border-slate-800 bg-slate-900/40 overflow-hidden">
         {/* Left Column: Reusable Memoized Sidebar */}
         <Sidebar
           chats={chats}

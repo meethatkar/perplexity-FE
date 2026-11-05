@@ -49,17 +49,17 @@ const Sidebar = ({
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        {/* Top Header: PERPLEXITY | USERNAME */}
+        {/* Top Header: aether-ai | USERNAME */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 shadow-md shadow-indigo-500/20 text-white">
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-300">
               <SparklesIcon className="w-4 h-4" />
             </div>
             <div className="flex items-center font-bold tracking-wider text-xs uppercase">
-              <span className="text-white">PERPLEXITY</span>
-              <span className="mx-1.5 text-slate-500">|</span>
+              <span className="text-slate-200">aether-ai</span>
+              <span className="mx-1.5 text-slate-600">|</span>
               <span
-                className="text-indigo-400 truncate max-w-[110px]"
+                className="text-slate-400 truncate max-w-[110px]"
                 title={username}
               >
                 {username}
@@ -124,9 +124,9 @@ const Sidebar = ({
 
         {/* Sidebar Footer */}
         <div className="pt-3 mt-auto border-t border-slate-800/80">
-          <div className="flex items-center gap-3 px-3 py-2 rounded-2xl bg-slate-800/40 border border-slate-800 text-slate-300 text-xs">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="truncate">Perplexity 3.0 Engine Ready</span>
+          <div className="flex items-center gap-3 px-3 py-2 rounded-2xl bg-slate-800/40 border border-slate-800 text-slate-400 text-xs">
+            <div className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
+            <span className="truncate">aether-ai Ready</span>
           </div>
         </div>
       </aside>

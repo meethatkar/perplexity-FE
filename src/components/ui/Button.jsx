@@ -27,17 +27,17 @@ const Button = ({
 
   const variants = {
     primary:
-      "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:shadow-indigo-500/30 text-white shadow-lg",
+      "bg-slate-100 hover:bg-white text-slate-900 border border-slate-200 shadow-sm",
     danger:
-      "bg-gradient-to-r from-rose-500 to-red-600 hover:shadow-rose-500/30 text-white shadow-lg",
+      "bg-rose-900/60 hover:bg-rose-800 text-rose-200 border border-rose-700/50 shadow-sm",
     secondary:
-      "bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 hover:border-slate-600 shadow-sm",
+      "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm",
     outline:
-      "bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 hover:text-white border border-indigo-500/40 shadow-sm",
+      "bg-transparent hover:bg-slate-800/80 text-slate-200 border border-slate-700 shadow-sm",
     ghost:
-      "bg-transparent hover:bg-slate-800/80 text-slate-400 hover:text-white shadow-none",
+      "bg-transparent hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 shadow-none",
     subtle:
-      "bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60 shadow-none",
+      "bg-slate-800/50 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 shadow-none",
   };
 
   const selectedSize = sizeClasses[size] !== undefined ? sizeClasses[size] : sizeClasses.md;
