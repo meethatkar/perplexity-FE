@@ -7,11 +7,13 @@ import ChatHeader from "../components/ChatHeader";
 import MessageList from "../components/MessageList";
 import ChatInput from "../components/ChatInput";
 import { useChat } from "../hooks/useChat";
+import { useAuth } from "../../auth/hooks/useAuth";
 import { setCurrentChatId } from "../chat.slice";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { logout } = useAuth();
   const { handleSendMessage, getChats, getMessages, deleteChat } = useChat();
   const navigate = useNavigate();
   const socketIO = useSocketIO();
@@ -117,6 +119,7 @@ const Dashboard = () => {
             activeChatTitle={activeChatTitle}
             onToggleSidebar={handleToggleSidebar}
             username={displayUsername}
+            onLogout={logout}
           />
 
           {/* Central Scrollable Conversation Stream */}

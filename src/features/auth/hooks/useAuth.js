@@ -1,6 +1,7 @@
 import { authService } from "../service/auth.service";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setLoading, setError } from "../auth.slice";
+import { setUser, setLoading, setError, resetAuthState } from "../auth.slice";
+import { resetChatState } from "../../chat/chat.slice";
 
 export const useAuth = () => {
   const { user, loading, error } = useSelector((state) => state.auth);
@@ -42,8 +43,14 @@ export const useAuth = () => {
   };
 
   const logout = async () => {
-    await authService.logout();
-    dispatch(setUser(null));
+    try {
+      await authService.logout();
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      dispatch(resetAuthState());
+      dispatch(resetChatState());
+    }
   };
 
   const getUser = async () => {

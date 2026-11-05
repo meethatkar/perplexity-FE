@@ -1,13 +1,18 @@
 import React from "react";
 import Button from "../../../components/ui/Button";
-import { MenuIcon, SparklesIcon } from "./icons";
+import { MenuIcon, SparklesIcon, LogOutIcon } from "./icons";
 import { formatChatTitle } from "../utils/formatTitle";
 
 /**
  * ChatHeader Component
- * Top navigation bar inside the main view with mobile sidebar toggle and status
+ * Top navigation bar inside the main view with mobile sidebar toggle, status and logout
  */
-const ChatHeader = ({ activeChatTitle, onToggleSidebar, username }) => {
+const ChatHeader = ({
+  activeChatTitle,
+  onToggleSidebar,
+  username,
+  onLogout,
+}) => {
   const displayTitle = activeChatTitle
     ? formatChatTitle(activeChatTitle)
     : "New Conversation";
@@ -38,7 +43,7 @@ const ChatHeader = ({ activeChatTitle, onToggleSidebar, username }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs text-slate-300">
           <SparklesIcon className="w-3.5 h-3.5 text-indigo-400" />
           <span>Model: Perplexity-Pro</span>
@@ -47,6 +52,20 @@ const ChatHeader = ({ activeChatTitle, onToggleSidebar, username }) => {
         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-xs shadow-md shadow-indigo-500/20 uppercase" title={username}>
           {username ? username[0] : "U"}
         </div>
+
+        {onLogout && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onLogout}
+            title="Log out"
+            className="flex items-center gap-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 !rounded-xl text-xs px-2.5 py-1.5 transition-colors border border-slate-800 hover:border-rose-500/30"
+          >
+            <LogOutIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </Button>
+        )}
       </div>
     </header>
   );
