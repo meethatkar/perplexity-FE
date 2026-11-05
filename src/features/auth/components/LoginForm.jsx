@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import { useAuth } from "../hooks/useAuth";
+
 const LoginForm = () => {
   const { login, loading, error, user } = useAuth();
   const [formData, setFormData] = useState({
@@ -22,13 +23,6 @@ const LoginForm = () => {
     }
   }, [user, loading, navigate]);
 
-  const handleReset = () => {
-    setFormData({
-      userInfo: "",
-      password: "",
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(formData);
@@ -36,75 +30,80 @@ const LoginForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full max-w-md p-10 mx-auto backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
-    >
+    <div className="w-full rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
+      {/* Brand & Title */}
       <div className="mb-8 text-center">
-        <h2 className="text-2xl font-bold text-slate-100">
-          Welcome Back
+        <div className="inline-flex items-center justify-center w-10 h-10 mb-4 rounded-xl bg-slate-800 border border-slate-700 text-slate-200">
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
+          </svg>
+        </div>
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-100">
+          Sign in to aether-ai
         </h2>
-        <p className="mt-2 text-sm text-slate-400">
-          Please enter your details to sign in to aether-ai.
+        <p className="mt-1.5 text-xs sm:text-sm text-slate-400">
+          Enter your credentials to continue
         </p>
       </div>
 
       {error && (
-        <div className="p-3 mb-6 text-sm text-red-200 bg-red-500/20 border border-red-500/50 rounded-lg">
-          {error}
+        <div className="flex items-center gap-2 p-3 mb-6 text-xs text-rose-300 bg-rose-950/40 border border-rose-800/60 rounded-xl">
+          <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-rose-400" />
+          <span>{error}</span>
         </div>
       )}
 
-      <Input
-        label="Email or Username"
-        id="userInfo"
-        type="text"
-        value={formData.userInfo}
-        onChange={handleChange}
-        placeholder="name@example.com"
-        required
-      />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          label="Email or Username"
+          id="userInfo"
+          type="text"
+          value={formData.userInfo}
+          onChange={handleChange}
+          placeholder="name@example.com"
+          required
+        />
 
-      <Input
-        label="Password"
-        id="password"
-        type="password"
-        value={formData.password}
-        onChange={handleChange}
-        placeholder="••••••••"
-        required
-      />
+        <Input
+          label="Password"
+          id="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="••••••••"
+          required
+        />
 
-      <div className="flex flex-col gap-4 mt-8 sm:flex-row">
-        <Button
-          type="submit"
-          variant="primary"
-          className="flex-1"
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Login"}
-        </Button>
-        <Button
-          type="button"
-          variant="danger"
-          onClick={handleReset}
-          className="flex-1"
-          disabled={loading}
-        >
-          Reset
-        </Button>
-      </div>
+        <div className="pt-2">
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full !py-2.5 !rounded-xl font-medium text-sm"
+            disabled={loading}
+          >
+            {loading ? "Signing in..." : "Continue"}
+          </Button>
+        </div>
+      </form>
 
-      <p className="mt-6 text-sm text-center text-gray-300">
-        Don't have an account?{" "}
+      <p className="mt-6 text-center text-xs text-slate-400">
+        Don&apos;t have an account?{" "}
         <Link
           to="/signup"
-          className="font-semibold text-indigo-300 transition-colors hover:text-indigo-200"
+          className="font-medium text-slate-200 transition-colors hover:text-white underline underline-offset-4 decoration-slate-600 hover:decoration-white"
         >
           Sign up
         </Link>
       </p>
-    </form>
+    </div>
   );
 };
 
