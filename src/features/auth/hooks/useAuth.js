@@ -1,23 +1,45 @@
 import { authService } from "../service/auth.service";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setLoading, setError, resetAuthState } from "../auth.slice";
+import {
+  setUser,
+  setLoading,
+  setError,
+  setFieldErrors,
+  clearFieldError,
+  resetAuthState,
+} from "../auth.slice";
 import { resetChatState } from "../../chat/chat.slice";
 
 export const useAuth = () => {
-  const { user, loading, error } = useSelector((state) => state.auth);
+  const { user, loading, error, fieldErrors } = useSelector(
+    (state) => state.auth,
+  );
   const dispatch = useDispatch();
+
+  const clearError = (fieldName) => {
+    if (fieldName) {
+      dispatch(clearFieldError(fieldName));
+    } else {
+      dispatch(setError(null));
+      dispatch(setFieldErrors({}));
+    }
+  };
 
   const login = async (credentials) => {
     dispatch(setLoading(true));
     dispatch(setError(null));
+    dispatch(setFieldErrors({}));
     try {
-      const data = await authService.login(credentials);
-      dispatch(setUser(data?.user || data));
-      return data;
+      const res = await authService.login(credentials);
+      // Uniform response: res.data.user
+      const userData = res.data?.user || res.user || res;
+      dispatch(setUser(userData));
+      return userData;
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Login failed";
-      dispatch(setError(errorMessage));
+      dispatch(setError(err.message || "Login failed"));
+      if (err.errors) {
+        dispatch(setFieldErrors(err.errors));
+      }
       throw err;
     } finally {
       dispatch(setLoading(false));
@@ -27,15 +49,15 @@ export const useAuth = () => {
   const signup = async (userData) => {
     dispatch(setLoading(true));
     dispatch(setError(null));
+    dispatch(setFieldErrors({}));
     try {
-      const data = await authService.signup(userData);
-      // NOTE: not storing data as in setUser as it'll not return user data until email is verified.
-
-      return data;
+      const res = await authService.signup(userData);
+      return res;
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Signup failed";
-      dispatch(setError(errorMessage));
+      dispatch(setError(err.message || "Registration failed"));
+      if (err.errors) {
+        dispatch(setFieldErrors(err.errors));
+      }
       throw err;
     } finally {
       dispatch(setLoading(false));
@@ -55,15 +77,23 @@ export const useAuth = () => {
 
   const getUser = async () => {
     try {
-      const data = await authService.getMe();
-      dispatch(setUser(data?.user || data));
+      const res = await authService.getMe();
+      const userData = res.data?.user || res.user || res;
+      dispatch(setUser(userData));
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Failed to get user";
-      dispatch(setError(errorMessage));
       dispatch(setUser(null));
     }
   };
 
-  return { user, loading, error, login, signup, logout, getUser };
+  return {
+    user,
+    loading,
+    error,
+    fieldErrors,
+    login,
+    signup,
+    logout,
+    getUser,
+    clearError,
+  };
 };
