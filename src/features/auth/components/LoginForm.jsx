@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import { useAuth } from "../hooks/useAuth";
@@ -11,6 +11,10 @@ const LoginForm = () => {
     password: "",
   });
   const navigate = useNavigate();
+  const location = useLocation();
+  const [infoMessage, setInfoMessage] = useState(
+    location.state?.infoMessage || "",
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,6 +64,13 @@ const LoginForm = () => {
           Enter your credentials to continue
         </p>
       </div>
+
+      {infoMessage && (
+        <div className="flex items-center gap-2.5 p-3.5 mb-6 text-xs text-emerald-300 bg-emerald-950/40 border border-emerald-800/60 rounded-xl leading-relaxed">
+          <span className="shrink-0 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>{infoMessage}</span>
+        </div>
+      )}
 
       {error && !Object.keys(fieldErrors || {}).length && (
         <div className="flex items-center gap-2 p-3 mb-6 text-xs text-rose-300 bg-rose-950/40 border border-rose-800/60 rounded-xl">
