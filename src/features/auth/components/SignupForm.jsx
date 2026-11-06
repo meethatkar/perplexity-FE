@@ -5,17 +5,21 @@ import Button from "../../../components/ui/Button";
 import { useAuth } from "../hooks/useAuth";
 
 const SignupForm = () => {
-  const { signup, loading, error, user } = useAuth();
+  const { signup, loading, error, fieldErrors, user, clearError } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     username: "",
     password: "",
   });
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (fieldErrors && fieldErrors[name]) {
+      clearError(name);
+    }
   };
 
   useEffect(() => {
@@ -26,7 +30,15 @@ const SignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signup(formData);
+    setSuccessMessage("");
+    try {
+      const res = await signup(formData);
+      setSuccessMessage(
+        res.message || "Registration successful! Please check your email to verify.",
+      );
+    } catch {
+      // Caught and stored in Redux
+    }
   };
 
   return (
@@ -54,7 +66,14 @@ const SignupForm = () => {
         </p>
       </div>
 
-      {error && (
+      {successMessage && (
+        <div className="flex items-center gap-2 p-3 mb-6 text-xs text-emerald-300 bg-emerald-950/40 border border-emerald-800/60 rounded-xl">
+          <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span>{successMessage}</span>
+        </div>
+      )}
+
+      {error && !Object.keys(fieldErrors || {}).length && !successMessage && (
         <div className="flex items-center gap-2 p-3 mb-6 text-xs text-rose-300 bg-rose-950/40 border border-rose-800/60 rounded-xl">
           <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-rose-400" />
           <span>{error}</span>
@@ -69,6 +88,7 @@ const SignupForm = () => {
           value={formData.email}
           onChange={handleChange}
           placeholder="name@example.com"
+          error={fieldErrors?.email}
           required
         />
 
@@ -79,6 +99,7 @@ const SignupForm = () => {
           value={formData.username}
           onChange={handleChange}
           placeholder="your_username"
+          error={fieldErrors?.username}
           required
         />
 
@@ -89,6 +110,7 @@ const SignupForm = () => {
           value={formData.password}
           onChange={handleChange}
           placeholder="••••••••"
+          error={fieldErrors?.password}
           required
         />
 

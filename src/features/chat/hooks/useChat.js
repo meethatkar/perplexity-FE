@@ -3,7 +3,6 @@ import {
   setCurrentChatId,
   setError,
   setLoading,
-  createNewChat,
   createDraftChat,
   replaceDraftChat,
   removeDraftChat,
@@ -109,12 +108,11 @@ export const useChat = () => {
     try {
       const data = await getChatMessages(chatID);
       dispatch(setCurrentChatId(chatID));
-      const response = data.data.response;
-      console.log("MESSAGES: ", response);
-      dispatch(setMessages({ chatId: chatID, messages: response }));
+      const messageList = data.data?.messages || data.data?.response || [];
+      dispatch(setMessages({ chatId: chatID, messages: messageList }));
     } catch (error) {
-      dispatch(setError(error));
-      console.log("ERROR occured in fetching messages: ", error);
+      dispatch(setError(error?.message || "Failed to fetch messages"));
+      console.log("ERROR occurred in fetching messages: ", error);
     } finally {
       dispatch(setLoading(false));
     }

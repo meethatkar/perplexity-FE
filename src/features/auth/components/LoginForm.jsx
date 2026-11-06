@@ -5,7 +5,7 @@ import Button from "../../../components/ui/Button";
 import { useAuth } from "../hooks/useAuth";
 
 const LoginForm = () => {
-  const { login, loading, error, user } = useAuth();
+  const { login, loading, error, fieldErrors, user, clearError } = useAuth();
   const [formData, setFormData] = useState({
     userInfo: "",
     password: "",
@@ -15,6 +15,9 @@ const LoginForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (fieldErrors && fieldErrors[name]) {
+      clearError(name);
+    }
   };
 
   useEffect(() => {
@@ -25,8 +28,12 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(formData);
-    navigate("/");
+    try {
+      await login(formData);
+      navigate("/");
+    } catch {
+      // Caught and stored in Redux
+    }
   };
 
   return (
@@ -54,7 +61,7 @@ const LoginForm = () => {
         </p>
       </div>
 
-      {error && (
+      {error && !Object.keys(fieldErrors || {}).length && (
         <div className="flex items-center gap-2 p-3 mb-6 text-xs text-rose-300 bg-rose-950/40 border border-rose-800/60 rounded-xl">
           <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-rose-400" />
           <span>{error}</span>
@@ -69,6 +76,7 @@ const LoginForm = () => {
           value={formData.userInfo}
           onChange={handleChange}
           placeholder="name@example.com"
+          error={fieldErrors?.userInfo}
           required
         />
 
@@ -79,6 +87,7 @@ const LoginForm = () => {
           value={formData.password}
           onChange={handleChange}
           placeholder="••••••••"
+          error={fieldErrors?.password}
           required
         />
 
