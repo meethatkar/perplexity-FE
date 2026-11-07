@@ -14,6 +14,10 @@ export const authService = {
     const response = await baseUrl.post("/auth/logout");
     return response.data;
   },
+  guestLogin: async (username) => {
+    const response = await baseUrl.post("/auth/guest", { username });
+    return response.data;
+  },
   getMe: async () => {
     const response = await baseUrl.get("/auth/get-me");
     return response.data;
