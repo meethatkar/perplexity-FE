@@ -75,6 +75,27 @@ export const useAuth = () => {
     }
   };
 
+  const handleGuestLogin = async () => {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+    dispatch(setFieldErrors({}));
+    try {
+      const generatedUsername = `guest_${Math.random().toString(36).substring(2, 8)}`;
+      const res = await authService.guestLogin(generatedUsername);
+      const userData = res.data?.user || res.user || res;
+      dispatch(setUser(userData));
+      return userData;
+    } catch (err) {
+      dispatch(setError(err.message || "Guest login failed"));
+      if (err.errors) {
+        dispatch(setFieldErrors(err.errors));
+      }
+      throw err;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   const getUser = async () => {
     try {
       const res = await authService.getMe();
@@ -93,6 +114,7 @@ export const useAuth = () => {
     login,
     signup,
     logout,
+    guestLogin: handleGuestLogin,
     getUser,
     clearError,
   };
