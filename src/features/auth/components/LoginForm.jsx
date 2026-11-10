@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import { useAuth } from "../hooks/useAuth";
 
 const LoginForm = () => {
-  const { login, loading, error, fieldErrors, user, clearError } = useAuth();
+  const { login, guestLogin, loading, error, fieldErrors, user, clearError } =
+    useAuth();
   const [formData, setFormData] = useState({
     userInfo: "",
     password: "",
   });
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [infoMessage, setInfoMessage] = useState(
+    location.state?.infoMessage || "",
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,6 +39,18 @@ const LoginForm = () => {
       navigate("/");
     } catch {
       // Caught and stored in Redux
+    }
+  };
+
+  const handleGuestSubmit = async () => {
+    try {
+      setIsGuestLoading(true);
+      await guestLogin();
+      navigate("/");
+    } catch {
+      // Caught and stored in Redux
+    } finally {
+      setIsGuestLoading(false);
     }
   };
 
@@ -60,6 +78,13 @@ const LoginForm = () => {
           Enter your credentials to continue
         </p>
       </div>
+
+      {infoMessage && (
+        <div className="flex items-center gap-2.5 p-3.5 mb-6 text-xs text-emerald-300 bg-emerald-950/40 border border-emerald-800/60 rounded-xl leading-relaxed">
+          <span className="shrink-0 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>{infoMessage}</span>
+        </div>
+      )}
 
       {error && !Object.keys(fieldErrors || {}).length && (
         <div className="flex items-center gap-2 p-3 mb-6 text-xs text-rose-300 bg-rose-950/40 border border-rose-800/60 rounded-xl">
@@ -96,12 +121,45 @@ const LoginForm = () => {
             type="submit"
             variant="primary"
             className="w-full !py-2.5 !rounded-xl font-medium text-sm"
-            disabled={loading}
+            disabled={loading || isGuestLoading}
           >
             {loading ? "Signing in..." : "Continue"}
           </Button>
         </div>
       </form>
+
+      {/* Divider */}
+      <div className="relative my-6 flex items-center justify-center">
+        <div className="w-full border-t border-slate-800" />
+        <span className="absolute bg-slate-900/90 px-3 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+          or
+        </span>
+      </div>
+
+      {/* Guest Mode Action Button */}
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={handleGuestSubmit}
+        disabled={loading || isGuestLoading}
+        className="w-full !py-2.5 !rounded-xl font-medium text-sm flex items-center justify-center gap-2 text-slate-300 hover:text-white"
+      >
+        <svg
+          className="w-4 h-4 text-slate-400"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        <span>
+          {isGuestLoading ? "Creating guest session..." : "Continue as Guest"}
+        </span>
+      </Button>
 
       <p className="mt-6 text-center text-xs text-slate-400">
         Don&apos;t have an account?{" "}

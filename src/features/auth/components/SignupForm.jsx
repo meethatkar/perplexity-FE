@@ -33,9 +33,16 @@ const SignupForm = () => {
     setSuccessMessage("");
     try {
       const res = await signup(formData);
-      setSuccessMessage(
-        res.message || "Registration successful! Please check your email to verify.",
-      );
+      const message =
+        res.message ||
+        "Registration successful! Please check your email inbox to verify your account.";
+
+      // Navigate to login page immediately, passing the alert message in router state
+      navigate("/login", {
+        state: {
+          infoMessage: message,
+        },
+      });
     } catch {
       // Caught and stored in Redux
     }
