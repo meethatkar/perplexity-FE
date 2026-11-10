@@ -77,6 +77,12 @@ const chatSlice = createSlice({
         state.currentChatId = null;
       }
     },
+    removeLastMessage: (state, action) => {
+      const { chatId } = action.payload;
+      if (state.chats[chatId]?.messages?.length > 0) {
+        state.chats[chatId].messages.pop();
+      }
+    },
     // For setting messages from get api response
     setMessages: (state, action) => {
       const { chatId, messages } = action.payload;
@@ -119,6 +125,7 @@ export const {
   createDraftChat,
   replaceDraftChat,
   removeDraftChat,
+  removeLastMessage,
   setChats,
   setMessages,
   setLoading,

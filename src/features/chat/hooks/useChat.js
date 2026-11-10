@@ -6,6 +6,7 @@ import {
   createDraftChat,
   replaceDraftChat,
   removeDraftChat,
+  removeLastMessage,
   createMessage,
   setChats,
   setMessages,
@@ -77,10 +78,13 @@ export const useChat = () => {
         );
       }
     } catch (error) {
-      dispatch(setError(error));
+      dispatch(setError(error?.message || error || "Failed to send message"));
       console.log("ERROR occurred in sending message to ai: ", error);
       if (tempChatId) {
         dispatch(removeDraftChat({ tempId: tempChatId }));
+      } else if (chatId) {
+        // Roll back / remove the user's optimistic message from UI
+        dispatch(removeLastMessage({ chatId }));
       }
     } finally {
       dispatch(setLoading(false));

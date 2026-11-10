@@ -8,7 +8,7 @@ import MessageList from "../components/MessageList";
 import ChatInput from "../components/ChatInput";
 import { useChat } from "../hooks/useChat";
 import { useAuth } from "../../auth/hooks/useAuth";
-import { setCurrentChatId } from "../chat.slice";
+import { setCurrentChatId, setError } from "../chat.slice";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -117,6 +117,25 @@ const Dashboard = () => {
             username={displayUsername}
             onLogout={logout}
           />
+
+          {/* Rate limit & error banner notification */}
+          {error && (
+            <div className="mx-4 mt-3 mb-1 p-3 rounded-2xl bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs sm:text-sm flex items-center justify-between shadow-lg backdrop-blur-md animate-fadeIn">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+                <span className="truncate">
+                  {typeof error === "string" ? error : error?.message || "Failed to generate AI response. Please try again."}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => dispatch(setError(null))}
+                className="ml-3 px-2 py-0.5 text-xs rounded-lg text-rose-400 hover:text-rose-200 hover:bg-rose-900/40 transition-colors shrink-0"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
 
           {/* Central Scrollable Conversation Stream */}
           <MessageList
