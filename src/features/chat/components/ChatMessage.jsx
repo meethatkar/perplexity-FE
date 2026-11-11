@@ -22,8 +22,15 @@ const ChatMessage = ({ message, chatTitle, onSelectSuggestion }) => {
   };
 
   if (isUser) {
+    const elementId =
+      message._id || message.id
+        ? `msg-${message._id || message.id}`
+        : undefined;
     return (
-      <div className="flex justify-end w-full mb-6">
+      <div
+        id={elementId}
+        className="flex justify-end w-full mb-6 scroll-mt-20 transition-all duration-300"
+      >
         <div className="max-w-[85%] md:max-w-xl group">
           <div className="flex items-center justify-end gap-2 mb-1.5 px-1">
             <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">

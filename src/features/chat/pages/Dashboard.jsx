@@ -92,6 +92,30 @@ const Dashboard = () => {
     return currentChatId && chats[currentChatId]?.title;
   }, [chats, currentChatId]);
 
+  // Extract all user prompts/questions in the active conversation
+  const userPrompts = useMemo(() => {
+    return activeMessages
+      .filter((msg) => msg.role === "user" && msg.content?.trim())
+      .map((msg, idx) => ({
+        id: msg._id || msg.id || `prompt-${idx}`,
+        content: msg.content.trim(),
+        time: msg.createdAt || msg.time,
+      }));
+  }, [activeMessages]);
+
+  // Scroll to the selected prompt in the conversation view
+  const handleScrollToPrompt = useCallback((promptId) => {
+    const el = document.getElementById(`msg-${promptId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Temporary highlight effect
+      el.classList.add("ring-2", "ring-indigo-500/80", "ring-offset-2", "ring-offset-slate-950", "rounded-2xl");
+      setTimeout(() => {
+        el.classList.remove("ring-2", "ring-indigo-500/80", "ring-offset-2", "ring-offset-slate-950", "rounded-2xl");
+      }, 2000);
+    }
+  }, []);
+
   return (
     <div className="relative flex items-center justify-center h-screen w-full bg-slate-950 p-2 sm:p-3 md:p-4 overflow-hidden">
       {/* Outer Rounded Container / Frame matching the user's wireframe sketch */}
@@ -116,6 +140,8 @@ const Dashboard = () => {
             onToggleSidebar={handleToggleSidebar}
             username={displayUsername}
             onLogout={logout}
+            prompts={userPrompts}
+            onSelectPrompt={handleScrollToPrompt}
           />
 
           {/* Rate limit & error banner notification */}

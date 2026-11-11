@@ -2,6 +2,7 @@ import React from "react";
 import Button from "../../../components/ui/Button";
 import { MenuIcon, SparklesIcon, LogOutIcon } from "./icons";
 import { formatChatTitle } from "../utils/formatTitle";
+import PromptNavigator from "./PromptNavigator";
 
 /**
  * ChatHeader Component
@@ -12,13 +13,15 @@ const ChatHeader = ({
   onToggleSidebar,
   username,
   onLogout,
+  prompts = [],
+  onSelectPrompt,
 }) => {
   const displayTitle = activeChatTitle
     ? formatChatTitle(activeChatTitle)
     : "New Conversation";
 
   return (
-    <header className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md shrink-0">
+    <header className="relative z-30 flex items-center justify-between px-4 py-3 md:px-6 md:py-4 border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md shrink-0">
       <div className="flex items-center gap-3">
         {/* Mobile menu trigger */}
         <Button
@@ -44,6 +47,14 @@ const ChatHeader = ({
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3">
+        {/* Toggleable Prompt List Navigator */}
+        {prompts.length > 0 && (
+          <PromptNavigator
+            prompts={prompts}
+            onSelectPrompt={onSelectPrompt}
+          />
+        )}
+
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs text-slate-300">
           <SparklesIcon className="w-3.5 h-3.5 text-slate-400" />
           <span>Model: aether-pro</span>
